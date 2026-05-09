@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master 3D Design with Onshape — Handbook</title>
+<style>
+  :root {
+    --primary: #00BCD4;       /* Material Cyan 500 */
+    --primary-dark: #0097A7;  /* Material Cyan 700 */
+    --secondary: #1976D2;     /* Material Blue 600 */
+    --secondary-dark: #0D47A1;/* Material Blue 900 */
+    --accent: #00E5FF;        /* Material Cyan A400 */
+    --bg: #F0F2F5;            /* Light gray background */
+    --card: #ffffff;
+    --text: #263238;          /* Material Blue Grey 900 */
+    --muted: #546E7A;         /* Material Blue Grey 600 */
+    --border: #B0BEC5;        /* Material Blue Grey 200 */
+    --step-bg: #E1F5FE;       /* Material Light Blue 50 */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+
+  /* LAYOUT */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 280px; background: linear-gradient(180deg, var(--secondary-dark) 0%, var(--secondary) 100%); color: #fff;
+    position: fixed; top: 0; left: 0; height: 100vh;
+    overflow-y: auto; z-index: 100; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  }
+  .main { margin-left: 280px; flex: 1; }
+
+  /* SIDEBAR */
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar-header h1 { font-size: 18px; font-weight: 700; color: #fff; line-height: 1.3; margin-bottom: 8px; }
+  .sidebar-header p { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; line-height: 1.4; }
+  .toc-label {
+    padding: 12px 20px 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.4); text-transform: uppercase;
+  }
+  .toc { list-style: none; padding: 0 0 20px; }
+  .toc li a {
+    display: block; padding: 6px 20px 6px 20px;
+    color: rgba(255,255,255,0.7); text-decoration: none;
+    font-size: 13px; line-height: 1.4;
+    transition: all 0.15s; border-left: 3px solid transparent;
+  }
+  .toc li a:hover, .toc li a.active {
+    color: #fff; background: rgba(255,255,255,0.08);
+    border-left-color: var(--accent);
+  }
+  .toc li a.h2 { padding-left: 32px; font-size: 12px; }
+  .toc li a.h3 { padding-left: 44px; font-size: 11px; color: rgba(255,255,255,0.5); }
+  .page-num {
+    float: right; font-size: 10px;
+    color: rgba(255,255,255,0.35); margin-top: 1px;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--secondary) 40%, var(--primary) 100%);
+    color: white; padding: 60px 60px 50px; position: relative; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(13, 71, 161, 0.2);
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block; background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+    border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-radius: 20px; padding: 6px 16px; font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; color: white;
+  }
+  .hero h1 { font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 10px; }
+  .hero h1 span { color: var(--accent); text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .hero p { font-size: 16px; color: rgba(255,255,255,0.95); max-width: 600px; margin-bottom: 24px; line-height: 1.6; }
+  
+  .hero-meta { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+  .hero-meta-item { font-size: 13px; color: rgba(255,255,255,0.7); }
+  .hero-meta-item strong { display: block; font-size: 15px; color: #fff; font-weight: 600; margin-bottom: 2px;}
+
+  .hero-instructor { 
+    display: flex; 
+    align-items: center; 
+    gap: 16px; 
+    background: rgba(255,255,255,0.1); 
+    padding: 8px 20px 8px 8px; 
+    border-radius: 40px; 
+  }
+  .instructor-avatar {
+    width: 56px; height: 56px; 
+    border-radius: 50%;
+    border: 2px solid white; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    object-fit: cover;
+    object-position: center top;
+    padding-top: 6px;
+    background-color: rgba(255,255,255,0.05);
+  }
+
+  .sponsor-logos {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    align-items: center;
+    background: rgba(255,255,255,0.1);
+    padding: 12px 20px;
+    border-radius: 12px;
+    width: fit-content;
+  }
+  .sponsor-logos img {
+    height: 40px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+
+  /* CONTENT */
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
+  .section { margin-bottom: 60px; }
+  .section-title {
+    font-size: 28px; font-weight: 700; color: var(--secondary-dark);
+    border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 24px;
+  }
+  .subsection-title { font-size: 20px; font-weight: 600; color: var(--secondary); margin: 28px 0 12px; }
+  .sub-subsection-title { font-size: 16px; font-weight: 600; color: var(--muted); margin: 20px 0 8px; }
+  p.body { font-size: 15px; line-height: 1.7; color: var(--text); margin-bottom: 12px; }
+  ul.body-list { margin: 8px 0 16px 20px; }
+  ul.body-list li { font-size: 15px; line-height: 1.7; margin-bottom: 6px; }
+  ul.body-list li strong { color: var(--secondary); }
+
+  /* INFO BOX */
+  .info-box {
+    background: var(--step-bg); border-left: 4px solid var(--primary);
+    border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+    font-size: 14px; line-height: 1.6;
+  }
+  .info-box strong { color: var(--secondary); display: block; margin-bottom: 4px; font-size: 13px; }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  .data-table th { background: var(--secondary); color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; }
+  .data-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  .data-table tr:nth-child(even) td { background: #FAFAFA; }
+  .data-table tr:hover td { background: var(--step-bg); }
+
+  /* MODEL CARDS */
+  .models-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  .model-card {
+    background: var(--card); border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .model-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,188,212,0.15);
+  }
+  .model-card-header {
+    background: linear-gradient(90deg, var(--secondary-dark), var(--secondary));
+    color: white; padding: 18px 24px; display: flex; align-items: center; gap: 16px;
+  }
+  .model-num {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800; flex-shrink: 0;
+  }
+  .model-title { font-size: 20px; font-weight: 700; }
+  .model-meta { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 3px; }
+  .model-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+
+  /* SKETCHFAB VIEWER */
+  .model-viewer {
+    height: 340px;
+    background: #0a0f1e;
+    position: relative;
+    overflow: hidden;
+  }
+  .model-viewer iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .sf-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.55);
+    color: rgba(255,255,255,0.6);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .model-info { padding: 20px 24px; border-left: 1px solid var(--border); overflow-y: auto; }
+  .model-desc { font-size: 13px; line-height: 1.65; color: var(--muted); margin-bottom: 14px; }
+  .objectives-title, .steps-title, .tips-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.8px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .objectives-title { color: var(--primary-dark); }
+  .steps-title { color: var(--secondary); margin-top: 12px; }
+  .tips-title { color: var(--primary-dark); margin-top: 12px; }
+  .obj-list, .tip-list { list-style: none; margin: 0 0 4px; }
+  .obj-list li::before { content: '▸ '; color: var(--primary); font-size: 11px; }
+  .tip-list li::before { content: '✓ '; color: var(--primary); font-size: 11px; }
+  .obj-list li, .tip-list li { font-size: 12px; line-height: 1.6; margin-bottom: 3px; }
+  .steps-accordion { margin-top: 4px; }
+  .step-item {
+    border: 1px solid var(--border); border-radius: 8px;
+    margin-bottom: 6px; overflow: hidden;
+  }
+  .step-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; cursor: pointer;
+    background: var(--step-bg); user-select: none;
+    font-size: 12px; font-weight: 600; color: var(--secondary-dark);
+  }
+  .step-header:hover { background: #B3E5FC; }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--secondary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .step-arrow { margin-left: auto; transition: transform 0.2s; font-size: 10px; color: var(--muted); }
+  .step-item.open .step-arrow { transform: rotate(90deg); }
+  .step-body { display: none; padding: 8px 12px 10px 44px; background: #fff; }
+  .step-item.open .step-body { display: block; }
+  .step-body ul { list-style: disc; margin-left: 4px; }
+  .step-body li { font-size: 12px; line-height: 1.6; margin-bottom: 2px; color: var(--text); }
+
+  /* STEP BOXES for chapters */
+  .step-boxes { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .step-box {
+    display: grid; grid-template-columns: 60px 1fr;
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .step-box-num {
+    background: var(--secondary); color: white;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 10px; padding: 10px 6px; text-align: center; line-height: 1.3;
+  }
+  .step-box-num span { font-size: 22px; font-weight: 800; display: block; }
+  .step-box-content { padding: 12px 16px; background: var(--step-bg); }
+  .step-box-content strong { font-size: 14px; color: var(--secondary-dark); display: block; margin-bottom: 4px; }
+  .step-box-content ul { list-style: disc; margin-left: 16px; }
+  .step-box-content li { font-size: 13px; line-height: 1.6; }
+
+  /* SHORTCUT TABLE */
+  kbd {
+    background: #263238; color: var(--accent); border: 1px solid #455A64;
+    border-radius: 4px; padding: 2px 7px; font-family: monospace;
+    font-size: 12px; font-weight: 700;
+  }
+
+  /* GRADING */
+  .grading-bar { height: 8px; background: var(--border); border-radius: 4px; margin-top: 4px; }
+  .grading-bar-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); border-radius: 4px; transition: width 1s; }
+
+  /* SCROLL PROGRESS */
+  .progress-bar {
+    position: fixed; top: 0; left: 280px; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--secondary), var(--accent)); z-index: 200;
+    transform-origin: left; transform: scaleX(0);
+    transition: transform 0.1s;
+  }
+
+  /* GOOGLE TRANSLATE WIDGET - INTERACTIVE */
+  .translate-widget {
+    position: fixed;
+    top: 16px;
+    right: 24px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 6px 14px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(0, 188, 212, 0.2);
+  }
+  .translate-widget::before {
+    content: '🌐';
+    font-size: 18px;
+  }
+  .translate-widget:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,188,212,0.25);
+    border-color: var(--primary);
+  }
+  .translate-widget select {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--secondary-dark);
+    padding: 6px 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+  }
+  .translate-widget select:hover {
+    color: var(--primary-dark);
+  }
+  /* Hide the Google Translate top banner */
+  .skiptranslate iframe { display: none !important; }
+  body { top: 0 !important; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .model-body { grid-template-columns: 1fr; }
+    .model-viewer { height: 260px; }
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .hero { padding: 32px 24px; }
+    .hero h1 { font-size: 32px; }
+    .content { padding: 24px 20px 60px; }
+    .progress-bar { left: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="google_translate_element" class="translate-widget"></div>
+<div class="progress-bar" id="progress"></div>
+<div class="layout">
+
+<!-- SIDEBAR / TOC -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>Master 3D Design<br>with Onshape</h1>
+    <p><strong>Collaborators & Sponsors:</strong><br>Embedded System Research Center<br>HertzBit Research Organization</p>
+  </div>
+  <div class="toc-label">Table of Contents</div>
+  <ul class="toc" id="toc">
+    <li><a href="#overview" class="h1">Course Overview<span class="page-num">1</span></a></li>
+    <li><a href="#ch0" class="h1">Ch 0 — Before You Begin<span class="page-num">2</span></a></li>
+    <li><a href="#ch1" class="h1">Ch 1 — Getting Started<span class="page-num">3</span></a></li>
+    <li><a href="#ch1-interface" class="h2">Interface Overview<span class="page-num">3</span></a></li>
+    <li><a href="#ch1-units" class="h2">Units &amp; Settings<span class="page-num">4</span></a></li>
+    <li><a href="#ch2" class="h1">Ch 2 — Sketching<span class="page-num">5</span></a></li>
+    <li><a href="#ch2-planes" class="h2">Sketch Planes<span class="page-num">5</span></a></li>
+    <li><a href="#ch2-tools" class="h2">Sketch Tools<span class="page-num">6</span></a></li>
+    <li><a href="#ch2-constraints" class="h2">Constraints<span class="page-num">6</span></a></li>
+    <li><a href="#ch3" class="h1">Ch 3 — 3D Features<span class="page-num">7</span></a></li>
+    <li><a href="#ch3-extrude" class="h2">Extrude<span class="page-num">7</span></a></li>
+    <li><a href="#ch3-revolve" class="h2">Revolve<span class="page-num">8</span></a></li>
+    <li><a href="#ch3-fillet" class="h2">Fillet &amp; Chamfer<span class="page-num">8</span></a></li>
+    <li><a href="#ch4" class="h1">Ch 4 — 10 Model Projects<span class="page-num">9</span></a></li>
+    <li><a href="#model1" class="h2">Model 1 · 3D Vase<span class="page-num">9</span></a></li>
+    <li><a href="#model2" class="h2">Model 2 · Door Hinge<span class="page-num">10</span></a></li>
+    <li><a href="#model3" class="h2">Model 3 · iPhone Case<span class="page-num">11</span></a></li>
+    <li><a href="#model4" class="h2">Model 4 · Nut & Bolt<span class="page-num">12</span></a></li>
+    <li><a href="#model5" class="h2">Model 5 · Turbine Blade<span class="page-num">13</span></a></li>
+    <li><a href="#model6" class="h2">Model 6 · Wind Turbine<span class="page-num">14</span></a></li>
+    <li><a href="#model7" class="h2">Model 7 · Drone Frame<span class="page-num">15</span></a></li>
+    <li><a href="#model8" class="h2">Model 8 · Starship<span class="page-num">16</span></a></li>
+    <li><a href="#model9" class="h2">Model 9 · Robotic Arm<span class="page-num">17</span></a></li>
+    <li><a href="#model10" class="h2">Model 10 · Spot Robot<span class="page-num">18</span></a></li>
+    <li><a href="#ch5" class="h1">Ch 5 — Best Practices<span class="page-num">19</span></a></li>
+    <li><a href="#ch5-habits" class="h2">Modeling Habits<span class="page-num">19</span></a></li>
+    <li><a href="#ch5-dfm" class="h2">Design for Mfg.<span class="page-num">20</span></a></li>
+    <li><a href="#ch5-shortcuts" class="h2">Shortcuts<span class="page-num">20</span></a></li>
+    <li><a href="#ch6" class="h1">Ch 6 — Assessment<span class="page-num">21</span></a></li>
+    <li><a href="#ch7" class="h1">Ch 7 — 1-Month Roadmap<span class="page-num">22</span></a></li>
+    <li><a href="#appendix" class="h1">Appendix<span class="page-num">23</span></a></li>
+  </ul>
+</aside>
+
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Collaborators: Embedded System Research Center & HertzBit</div>
+  <h1>Master 3D Design <br>with <span>Onshape</span></h1>
+  <p>Complete 3D Design Handbook — Beginner to Intermediate level. 10 hands-on models with interactive Sketchfab 3D previews.</p>
+  
+  <div class="hero-meta">
+    <div class="hero-instructor">
+      <img src="https://i.ibb.co/d4kzTpFW/Picsart-26-02-21-00-01-50-579-1-1.png" alt="Sadat Mahmud" class="instructor-avatar">
+      <div class="hero-meta-item"><strong>Sadat Mahmud</strong>Instructor · C.T.O, HertzBit</div>
+    </div>
+    <div class="hero-meta-item" style="border-left: 1px solid rgba(255,255,255,0.2); padding-left: 20px;">
+      <strong>Sponsors & Collaborators</strong>Embedded System Research Center<br>HertzBit Research Organization
+    </div>
+    <div class="hero-meta-item" style="border-left: 1px solid rgba(255,255,255,0.2); padding-left: 20px;">
+      <strong>10 Models</strong>Beginner → Intermediate
+    </div>
+    <div class="hero-meta-item" style="border-left: 1px solid rgba(255,255,255,0.2); padding-left: 20px;">
+      <strong>25–35 hrs</strong>Estimated Duration
+    </div>
+  </div>
+  
+  <!-- SPONSOR LOGOS -->
+  <div class="sponsor-logos">
+    <img src="https://i.ibb.co/p6MRk6kk/Hertz-Bit2026-Main-LOGO2.png" alt="HertzBit Research Organization">
+    <img src="https://i.ibb.co/1tK69ZMK/Screenshot-2026-03-05-072534.png" alt="Embedded System Research Center">
+    <img src="https://i.ibb.co/s9ZXfJsP/Screenshot-2026-03-05-073037.png" alt="Daffodil International University">
+  </div>
+</div>
+
+<div class="content">
+
+<!-- OVERVIEW -->
+<section class="section" id="overview">
+  <h2 class="section-title">Course Overview</h2>
+  <p class="body">This handbook takes you from absolute beginner to intermediate-level 3D designer using Onshape by PTC — a fully cloud-based CAD platform. Through 10 carefully structured projects, you will master parametric 3D modeling fundamentals.</p>
+  <h3 class="subsection-title">Who This Course Is For</h3>
+  <ul class="body-list">
+    <li>Engineering and design students with no prior CAD experience</li>
+    <li>Hobbyists interested in robotics, drones, or mechanical design</li>
+    <li>Professionals transitioning to cloud-based CAD</li>
+    <li>Makers and innovators who want to build ideas digitally</li>
+  </ul>
+  <h3 class="subsection-title">Course Structure</h3>
+  <table class="data-table">
+    <thead><tr><th>Phase</th><th>Models</th><th>Topics Covered</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Phase 1: Foundations</strong></td><td>1–3</td><td>Sketching, extrusion, basic shape modeling, fillets</td></tr>
+      <tr><td><strong>Phase 2: Intermediate</strong></td><td>4–7</td><td>Revolve, loft, advanced patterns, frames</td></tr>
+      <tr><td><strong>Phase 3: Assembly & Kinematics</strong></td><td>8–10</td><td>Multi-part assemblies, mechanical systems, rigging</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- CHAPTER 0 -->
+<section class="section" id="ch0">
+  <h2 class="section-title">Chapter 0: Before You Begin</h2>
+  
+  <h3 class="subsection-title">Who Should Take This Course?</h3>
+  <p class="body">This handbook is engineered for absolute beginners and transitioning professionals alike. Whether you are a student exploring mechanical engineering, a hobbyist designing custom parts for 3D printing, or a maker building drones and robots, this curriculum provides a structured, hands-on path to CAD mastery.</p>
+  
+  <div class="info-box">
+    <strong>Hardware & Software Requirements</strong>
+    <ul class="body-list" style="margin-bottom: 0;">
+      <li><strong>A standard computer/laptop:</strong> Works flawlessly on Windows, Mac, Linux, or even Chromebooks.</li>
+      <li><strong>A 3-Button Mouse:</strong> A mouse with a clickable scroll wheel is <em>mandatory</em> for CAD navigation (rotating and panning). Trackpads will severely limit your workflow.</li>
+      <li><strong>Internet Connection:</strong> Onshape is 100% cloud-based. There is nothing to download or install.</li>
+    </ul>
+  </div>
+
+  <h3 class="subsection-title">Why Onshape?</h3>
+  <p class="body">Unlike traditional legacy CAD software (such as SolidWorks or Inventor), Onshape runs entirely in your web browser. It leverages secure cloud computing, meaning it won't slow down your local machine. It offers built-in version control (like Google Docs for CAD), seamless collaboration features, and industry-standard parametric modeling tools.</p>
+</section>
+
+<!-- CHAPTER 1 -->
+<section class="section" id="ch1">
+  <h2 class="section-title">Chapter 1: Getting Started with Onshape</h2>
+
+  <h3 class="subsection-title" id="ch1-interface">1.1 Interface Overview</h3>
+  <p class="body">When you open Onshape, you are presented with a clean, browser-based CAD environment. Understanding the interface is the first step before creating any model.</p>
+  <div class="info-box"><strong>Key Interface Elements</strong>Feature Tree (left panel), 3D Viewport (center), Toolbar (top), Sketch Panel (contextual), Part Studio vs Assembly tabs (bottom).</div>
+
+  <h4 class="sub-subsection-title">Navigation Controls</h4>
+  <table class="data-table">
+    <thead><tr><th>Action</th><th>Mouse / Keyboard</th></tr></thead>
+    <tbody>
+      <tr><td>Rotate View</td><td>Right-click + drag</td></tr>
+      <tr><td>Pan View</td><td>Middle-click + drag</td></tr>
+      <tr><td>Zoom In/Out</td><td>Scroll wheel</td></tr>
+      <tr><td>Fit to View</td><td><kbd>F</kbd></td></tr>
+      <tr><td>Select Object</td><td>Left-click</td></tr>
+      <tr><td>Right-Click Menu</td><td>Right-click on geometry</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="subsection-title" id="ch1-units">1.3 Units and Document Settings</h3>
+  <p class="body">Always configure your document units before starting. For mechanical engineering, millimeters (mm) are standard.</p>
+  <div class="step-boxes">
+    <div class="step-box"><div class="step-box-num">Step<span>1</span></div><div class="step-box-content"><strong>Open a new document in Onshape</strong><ul><li>Go to onshape.com and log in</li><li>Click '+ New' &gt; 'Document'</li></ul></div></div>
+    <div class="step-box"><div class="step-box-num">Step<span>2</span></div><div class="step-box-content"><strong>Set units</strong><ul><li>Click the 'Units' menu in the bottom-right corner</li><li>Select Millimeter, Gram, Second (MGS)</li></ul></div></div>
+    <div class="step-box"><div class="step-box-num">Step<span>3</span></div><div class="step-box-content"><strong>Enable grid</strong><ul><li>Turn on grid display for visual reference while sketching</li></ul></div></div>
+  </div>
+</section>
+
+<!-- CHAPTER 2 -->
+<section class="section" id="ch2">
+  <h2 class="section-title">Chapter 2: Sketching Fundamentals</h2>
+  <p class="body">Every 3D model begins as a 2D sketch. A sketch is a collection of lines, arcs, and curves drawn on a plane that is later turned into 3D geometry using features like Extrude or Revolve.</p>
+
+  <h3 class="subsection-title" id="ch2-planes">2.1 Sketch Planes</h3>
+  <ul class="body-list">
+    <li><strong>Front Plane (XY):</strong> Best for viewing parts from the front (default elevation)</li>
+    <li><strong>Top Plane (XZ):</strong> Best for floor plans, top-down layouts</li>
+    <li><strong>Right Plane (YZ):</strong> Best for side profiles</li>
+  </ul>
+
+  <h3 class="subsection-title" id="ch2-tools">2.2 Core Sketch Tools</h3>
+  <table class="data-table">
+    <thead><tr><th>Tool</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Line</td><td>Draw straight edges and boundaries</td></tr>
+      <tr><td>Rectangle (Corner/Center)</td><td>Create rectangular profiles quickly</td></tr>
+      <tr><td>Circle (Center/3-Point)</td><td>Define circular cross-sections</td></tr>
+      <tr><td>Arc (3 types)</td><td>Create partial circular edges</td></tr>
+      <tr><td>Polygon (N-sides)</td><td>Regular polygon shapes</td></tr>
+      <tr><td>Slot</td><td>Elongated holes and slots</td></tr>
+      <tr><td>Spline</td><td>Organic/curved profiles</td></tr>
+      <tr><td>Construction Geometry</td><td>Non-solid guide geometry (toggle with Q)</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="subsection-title" id="ch2-constraints">2.3 Sketch Constraints</h3>
+  <p class="body">Constraints define geometric relationships. A fully constrained sketch turns black; an underconstrained sketch shows blue geometry.</p>
+  <ul class="body-list">
+    <li><strong>Coincident:</strong> Two points share the same location</li>
+    <li><strong>Horizontal/Vertical:</strong> Forces a line to be perfectly H or V</li>
+    <li><strong>Parallel:</strong> Two lines run in the same direction</li>
+    <li><strong>Perpendicular:</strong> Two lines meet at 90 degrees</li>
+    <li><strong>Tangent:</strong> A line or arc flows smoothly into another curve</li>
+    <li><strong>Equal:</strong> Two elements share the same size/length</li>
+    <li><strong>Symmetric:</strong> Elements mirror about a centerline</li>
+  </ul>
+  <div class="info-box"><strong>Pro Tip</strong>Always fully constrain your sketches before adding 3D features. A fully-defined sketch ensures your model updates predictably when you change dimensions.</div>
+</section>
+
+<!-- CHAPTER 3 -->
+<section class="section" id="ch3">
+  <h2 class="section-title">Chapter 3: Core 3D Features</h2>
+
+  <h3 class="subsection-title" id="ch3-extrude">3.1 Extrude</h3>
+  <p class="body">Extrude pushes a 2D sketch profile along a straight axis to create a 3D solid or cut.</p>
+  <ul class="body-list">
+    <li><strong>New:</strong> Creates a new solid body</li>
+    <li><strong>Add:</strong> Merges with existing geometry (boolean union)</li>
+    <li><strong>Remove:</strong> Cuts from existing geometry (boolean subtract)</li>
+    <li><strong>Blind:</strong> Extrude a specific distance</li>
+    <li><strong>Symmetric:</strong> Extrude equally in both directions</li>
+    <li><strong>To Face/Vertex:</strong> Extrude up to a reference surface</li>
+  </ul>
+
+  <h3 class="subsection-title" id="ch3-revolve">3.2 Revolve</h3>
+  <p class="body">Revolve rotates a 2D profile around a centerline to create cylindrical and axially-symmetric shapes such as shafts, bottles, and wheels.</p>
+  <ul class="body-list">
+    <li>Select a closed profile sketch</li>
+    <li>Choose the axis of revolution (a line or axis)</li>
+    <li>Enter the angle of rotation (360° for a full revolution)</li>
+  </ul>
+
+  <h3 class="subsection-title" id="ch3-fillet">3.3 Fillet &amp; Chamfer</h3>
+  <table class="data-table">
+    <thead><tr><th>Feature</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Fillet</strong></td><td>Rounds an edge with a circular arc — adds material smoothness</td></tr>
+      <tr><td><strong>Chamfer</strong></td><td>Cuts a flat angled face at an edge (often 45°)</td></tr>
+      <tr><td><strong>Shell</strong></td><td>Hollows out a solid to a uniform wall thickness</td></tr>
+      <tr><td><strong>Mirror</strong></td><td>Reflects one or more features across a plane</td></tr>
+      <tr><td><strong>Circular Pattern</strong></td><td>Repeats features around an axis (e.g., bolt holes on a flange)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- CHAPTER 4 — 10 MODELS -->
+<section class="section" id="ch4">
+  <h2 class="section-title">Chapter 4: The 10 Model Projects</h2>
+  <p class="body">Each project builds progressively on previously learned skills. Complete them in order. Each card includes an interactive Sketchfab 3D viewer — rotate, zoom, and pan freely.</p>
+
+  <div class="models-grid" id="models-grid">
+    <!-- Cards injected by JS -->
+  </div>
+</section>
+
+<!-- CHAPTER 5 -->
+<section class="section" id="ch5">
+  <h2 class="section-title">Chapter 5: Design Best Practices</h2>
+
+  <h3 class="subsection-title" id="ch5-habits">5.1 Parametric Modeling Habits</h3>
+  <ul class="body-list">
+    <li>Always fully constrain sketches before creating features</li>
+    <li>Use variables (Onshape Variables feature) for dimensions you expect to change</li>
+    <li>Name all features in the Feature Tree — avoid 'Extrude 7' as a name</li>
+    <li>Build features in logical order: base shape first, refinements last</li>
+  </ul>
+
+  <h3 class="subsection-title">5.2 File and Document Management</h3>
+  <ul class="body-list">
+    <li>Use version control: create a version before major edits (click the clock icon)</li>
+    <li>Export to STEP (.stp) for sharing with other CAD software, STL for 3D printing</li>
+    <li>Share documents with collaborators using the 'Share' button — Onshape is cloud-native</li>
+  </ul>
+
+  <h3 class="subsection-title" id="ch5-dfm">5.3 Design for Manufacturing (DFM)</h3>
+  <table class="data-table">
+    <thead><tr><th>Process</th><th>Key Rules</th></tr></thead>
+    <tbody>
+      <tr><td><strong>3D Printing (FDM)</strong></td><td>Min wall 1.2mm, max overhang 45°, draft not required</td></tr>
+      <tr><td><strong>CNC Machining</strong></td><td>No blind holes deeper than 3× diameter, prefer round internal corners</td></tr>
+      <tr><td><strong>Sheet Metal</strong></td><td>Bend radius = material thickness, k-factor 0.4–0.5</td></tr>
+      <tr><td><strong>Injection Molding</strong></td><td>Draft angle 1–3°, uniform wall thickness &lt;4mm</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="subsection-title" id="ch5-shortcuts">5.4 Onshape Keyboard Shortcuts</h3>
+  <table class="data-table">
+    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><kbd>S</kbd></td><td>Open sketch tool search</td></tr>
+      <tr><td><kbd>D</kbd></td><td>Dimension tool</td></tr>
+      <tr><td><kbd>L</kbd></td><td>Line tool</td></tr>
+      <tr><td><kbd>C</kbd></td><td>Circle tool</td></tr>
+      <tr><td><kbd>R</kbd></td><td>Rectangle tool</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Fit view / Frame all</td></tr>
+      <tr><td><kbd>Ctrl+Z</kbd></td><td>Undo</td></tr>
+      <tr><td><kbd>N</kbd></td><td>Normal view to sketch plane</td></tr>
+      <tr><td><kbd>Q</kbd></td><td>Toggle construction geometry</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- CHAPTER 6 -->
+<section class="section" id="ch6">
+  <h2 class="section-title">Chapter 6: Assessment &amp; Grading</h2>
+  <h3 class="subsection-title">6.1 Project Grading Rubric</h3>
+  <div id="grading-rubric"></div>
+
+  <h3 class="subsection-title" style="margin-top:24px">6.2 Final Project (Model 10) Requirements</h3>
+  <ul class="body-list">
+    <li>Complete chassis with all component housings (motor, battery, board)</li>
+    <li>Minimum 3-part assembly with at least one revolute mate (rotating wheel)</li>
+    <li>All dimensions within ±1mm of functional specifications</li>
+    <li>DFM compliant: printable on FDM printer without critical support overhangs</li>
+    <li>Documented design with feature names and version history</li>
+  </ul>
+</section>
+
+<!-- CHAPTER 7 -->
+<section class="section" id="ch7">
+  <h2 class="section-title">Chapter 7: 1-Month Learning Roadmap</h2>
+  <p class="body">To effectively master 3D design without feeling overwhelmed, we recommend spreading the 10 models over a 4-week period. Consistency and hands-on practice are key to developing mechanical intuition.</p>
+  
+  <div class="step-boxes">
+    <div class="step-box">
+      <div class="step-box-num" style="background: var(--secondary-dark);">Week<span>1</span></div>
+      <div class="step-box-content">
+        <strong>The Fundamentals (approx. 5 Hours)</strong>
+        <p class="body" style="font-size: 13px; margin-bottom: 6px;">Focus on mastering the UI, basic sketching, constraints, and simple extrusions.</p>
+        <ul style="margin-bottom: 0;">
+          <li><strong>Read:</strong> Chapters 0, 1 & 2</li>
+          <li><strong>Build:</strong> Model 1 (3D Vase) & Model 2 (Door Hinge)</li>
+          <li><strong>Goal:</strong> Get comfortable navigating the 3D viewport and making sure your 2D sketches turn completely black (fully constrained).</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="step-box">
+      <div class="step-box-num" style="background: var(--secondary);">Week<span>2</span></div>
+      <div class="step-box-content">
+        <strong>Intermediate Operations (approx. 7 Hours)</strong>
+        <p class="body" style="font-size: 13px; margin-bottom: 6px;">Introduce hollow structures, cosmetic/helical threads, sweeps, and basic mechanical assemblies.</p>
+        <ul style="margin-bottom: 0;">
+          <li><strong>Build:</strong> Model 3 (iPhone Case) & Model 4 (Nut & Bolt)</li>
+          <li><strong>Goal:</strong> Master the Shell tool for thin-walled parts, understand thread generation, and successfully mate two parts together using a Cylindrical mate.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-box">
+      <div class="step-box-num" style="background: var(--primary-dark);">Week<span>3</span></div>
+      <div class="step-box-content">
+        <strong>Complex Geometry & Patterns (approx. 8 Hours)</strong>
+        <p class="body" style="font-size: 13px; margin-bottom: 6px;">Tackle aerodynamic shapes, lofts across offset planes, mirroring, and large-scale circular patterns.</p>
+        <ul style="margin-bottom: 0;">
+          <li><strong>Build:</strong> Model 5 (Turbine Blade), Model 6 (Wind Turbine), & Model 7 (Drone Frame)</li>
+          <li><strong>Goal:</strong> Learn to use the Loft tool to blend profiles, and drastically reduce modeling time by utilizing the Mirror and Pattern tools.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-box">
+      <div class="step-box-num" style="background: var(--primary);">Week<span>4</span></div>
+      <div class="step-box-content">
+        <strong>Advanced Assemblies & Kinematics (approx. 10 Hours)</strong>
+        <p class="body" style="font-size: 13px; margin-bottom: 6px;">Combine multi-part modeling with complex rigging, robotic design, and realistic motion constraints.</p>
+        <ul style="margin-bottom: 0;">
+          <li><strong>Build:</strong> Model 8 (Starship), Model 9 (Robotic Arm), & Model 10 (Spot Robot)</li>
+          <li><strong>Goal:</strong> Build multi-DOF (Degree of Freedom) assemblies, establish functional kinematic chains, and assign joint limits to prevent part collision.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPENDIX -->
+<section class="section" id="appendix">
+  <h2 class="section-title">Appendix</h2>
+  <h3 class="subsection-title">A. Feature Glossary</h3>
+  <table class="data-table">
+    <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Extrude</strong></td><td>Adds depth to a 2D sketch profile</td></tr>
+      <tr><td><strong>Revolve</strong></td><td>Rotates a profile around an axis</td></tr>
+      <tr><td><strong>Sweep</strong></td><td>Moves a profile along a path curve</td></tr>
+      <tr><td><strong>Loft</strong></td><td>Blends between two or more profiles</td></tr>
+      <tr><td><strong>Fillet</strong></td><td>Rounds an edge with a circular arc</td></tr>
+      <tr><td><strong>Shell</strong></td><td>Hollows a solid to a uniform wall thickness</td></tr>
+      <tr><td><strong>Boolean</strong></td><td>Combines, subtracts, or intersects solid bodies</td></tr>
+      <tr><td><strong>Pattern</strong></td><td>Repeats a feature in linear or circular array</td></tr>
+      <tr><td><strong>Mate</strong></td><td>Assembly constraint defining part relationships</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="subsection-title" style="margin-top:24px">B. Tolerances Reference</h3>
+  <table class="data-table">
+    <thead><tr><th>Process / Feature</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>FDM 3D Print accuracy</td><td>±0.2 to 0.5mm</td></tr>
+      <tr><td>CNC Mill accuracy</td><td>±0.01 to 0.05mm</td></tr>
+      <tr><td>Running fit clearance</td><td>0.2 to 0.5mm gap</td></tr>
+      <tr><td>M3 clearance hole</td><td>3.2mm diameter</td></tr>
+      <tr><td>M4 clearance hole</td><td>4.3mm diameter</td></tr>
+      <tr><td>M5 clearance hole</td><td>5.3mm diameter</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="subsection-title" style="margin-top:24px">C. Learning Resources</h3>
+  <ul class="body-list">
+    <li><strong>Onshape Learning Center:</strong> learn.onshape.com — free official tutorials</li>
+    <li><strong>HertzBit:</strong> mailhertzbit@gmail.com — course follow-along</li>
+    <li><strong>GrabCAD:</strong> grabcad.com — free 3D models for reference</li>
+    <li><strong>Thingiverse:</strong> thingiverse.com — printable STL inspiration</li>
+  </ul>
+
+  <div style="margin-top:48px;text-align:center;padding:32px;background:var(--card);border-radius:16px;color:var(--text);border:1px solid var(--border);box-shadow: 0 4px 16px rgba(0,0,0,0.05);">
+    <div style="font-size:24px;font-weight:800;margin-bottom:8px;background:linear-gradient(90deg, var(--secondary), var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Master 3D Design with Onshape</div>
+    <div style="font-size:14px;opacity:0.8;margin-bottom:4px;color:var(--muted)"><strong>Sponsors & Collaborators:</strong></div>
+    <div style="font-size:14px;font-weight:600;color:var(--secondary-dark)">Embedded System Research Center  ·  HertzBit Research Organization</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px">AB4 301, Daffodil International University | mailhertzbit@gmail.com</div>
+    <div style="font-size:15px;font-weight:700;margin-top:16px;color:var(--primary-dark)">Instructor: Sadat Mahmud · C.T.O, HertzBit</div>
+    
+    <!-- FOOTER LOGOS -->
+    <div style="display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 24px; background: var(--bg); padding: 16px; border-radius: 8px;">
+      <img src="https://i.ibb.co/p6MRk6kk/Hertz-Bit2026-Main-LOGO2.png" alt="HertzBit" style="height: 30px;">
+      <img src="https://i.ibb.co/1tK69ZMK/Screenshot-2026-03-05-072534.png" alt="ESRC" style="height: 30px; border-radius: 4px;">
+      <img src="https://i.ibb.co/s9ZXfJsP/Screenshot-2026-03-05-073037.png" alt="DIU" style="height: 30px; border-radius: 4px;">
+    </div>
+  </div>
+</section>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+// ===== MODEL DATA =====
+// sketchfabId maps each model card to a Sketchfab embed
+const MODELS = [
+  {
+    id: 'model1', num: 1, name: '3D Vase', level: 'Beginner', time: '1–1.5 hrs',
+    sketchfabId: 'baf5b71ba2c6406cb8b85a061d2aebde',
+    sketchfabTitle: 'Vas',
+    desc: "Your first model focuses on basic shape modeling. Learn to create an organic profile sketch, revolve it into a solid, and hollow it out. Establishes the core workflow used in every subsequent model.",
+    objectives: ['Open a new Part Studio and configure units', 'Create a fully-constrained 2D sketch using splines', 'Apply Revolve feature to generate a solid body', 'Use the Shell command for hollow vessels'],
+    steps: [
+      { title: 'Create New Document', actions: ["Go to onshape.com and log in", "Click '+ New' > 'Document'", "Name it 'Model 01 - Vase'"] },
+      { title: 'Start a Sketch', actions: ["Click 'Sketch' in the toolbar", "Select the 'Front Plane'", "Draw a vertical centerline (axis of revolution)"] },
+      { title: 'Draw Vase Profile', actions: ["Use 'Spline' tool to draw the outer curve", "Dimension base width and total height", "Fully constrain the sketch", "Click green checkmark to exit"] },
+      { title: 'Revolve the Sketch', actions: ["Click 'Revolve' in toolbar", "Select sketch profile as Face", "Select centerline as Axis (360°)", "Click green checkmark"] },
+      { title: 'Shell & Finish', actions: ["Select the top flat face of the vase", "Click 'Shell' and set thickness to 3mm", "Examine Feature Tree: Sketch, Revolve, Shell"] }
+    ],
+    tips: ['Work in millimeters for mechanical design', 'Fully constrain every sketch before revolving', 'Use origin as anchor for the base', 'Name features in Feature Tree']
+  },
+  {
+    id: 'model2', num: 2, name: 'Door Hinge', level: 'Beginner', time: '1.5–2 hrs',
+    sketchfabId: '3b1e4397d70648a9b7a30c91d934187e',
+    sketchfabTitle: 'Door Hinge',
+    desc: "Model a simple mechanical part. This project introduces basic extrusions, cutting holes, and modeling interlocking knuckles for hinge joints.",
+    objectives: ['Model a rectangular hinge leaf', 'Create extruded cuts for screw holes', 'Model cylindrical knuckles using Revolve or Extrude', 'Apply chamfers to screw holes'],
+    steps: [
+      { title: 'Set Up Base Leaf', actions: ["New Part Studio: 'Model 02 - Hinge'", "Sketch on Top Plane: 80x40mm rectangle", "Extrude 3mm upward"] },
+      { title: 'Model Knuckles', actions: ["Sketch on the edge face of the leaf", "Draw a circle of D=10mm offset from the edge", "Extrude horizontally along the edge to form segments"] },
+      { title: 'Cut the Knuckle Gaps', actions: ["Sketch rectangles over the sections to be removed", "Use 'Extrude Remove' to cut gaps for the opposing leaf"] },
+      { title: 'Add Screw Holes', actions: ["Sketch 3 circles on the main leaf face", "Extrude Remove, Through All", "Apply Chamfer to the top edges for countersink screws"] }
+    ],
+    tips: ['Keep gap tolerances in mind (0.2-0.5mm) if printing', 'Use linear patterns to evenly space the knuckles', 'Chamfer tool is perfect for countersunk hardware']
+  },
+  {
+    id: 'model3', num: 3, name: 'iPhone Case', level: 'Intermediate', time: '1.5–2 hrs',
+    sketchfabId: 'b3adc005144f44d5afeb201f60e681e4',
+    sketchfabTitle: 'iPhone Case',
+    desc: "A highly precise modeling exercise. You will construct a sleek, thin-walled phone case requiring precise fillets, sweeping curves, and detailed cutouts for cameras and ports.",
+    objectives: ['Use rounded rectangles for the primary form', 'Apply large fillets for ergonomic edges', 'Master the Shell command for uniform thin walls', 'Create precise cutouts on curved surfaces'],
+    steps: [
+      { title: 'Base Dimensions', actions: ["Sketch phone dimensions on Top Plane (e.g., 146x71mm)", "Add sketch fillets to the corners (R=10mm)", "Extrude solid block 8mm"] },
+      { title: 'Profile Fillets', actions: ["Apply full-round fillets to the top and bottom edges", "Ensure the exterior perfectly mimics the phone shape"] },
+      { title: 'Shell the Case', actions: ["Click Shell", "Select the front face to remove", "Set wall thickness to 1.5mm"] },
+      { title: 'Camera & Port Cutouts', actions: ["Sketch camera square on the back face", "Extrude Remove 2mm", "Sketch charging port on the bottom edge", "Extrude Remove, Through All"] },
+      { title: 'Button Reliefs', actions: ["Add slots on the side faces for volume and power buttons", "Fillet the cutout edges for a smooth feel"] }
+    ],
+    tips: ['Always shell *after* applying major exterior fillets', 'Use offset sketch tools to perfectly align the camera bump', 'Thin walls require precise dimensioning (measure a real phone!)']
+  },
+  {
+    id: 'model4', num: 4, name: 'Nut & Bolt Animation', level: 'Intermediate', time: '2 hrs',
+    sketchfabId: '796eb62d20bc41009a3f9990bf1ab5a4',
+    sketchfabTitle: 'Nut Bolt Animation',
+    desc: "Model an M12 hex bolt and matching nut. Covers polygon profiles, helical thread representation, chamfers, and creating your first mechanical assembly.",
+    objectives: ['Model a hex bolt and a matching hex nut', 'Understand thread representation (Helix + Sweep)', 'Create a mated fastener assembly in the Assembly tab', 'Animate a cylindrical mate'],
+    steps: [
+      { title: 'Model Bolt', actions: ["Sketch Polygon (6-sides) D=19mm, Extrude 8mm (Head)", "Sketch circle D=12mm on head, Extrude 40mm (Shank)"] },
+      { title: 'Add Threads', actions: ["Create Helix on the shank (Pitch=1.75mm)", "Sketch thread profile (60° triangle) at helix start", "Sweep Remove along the helix path"] },
+      { title: 'Model Nut', actions: ["New Part: Polygon D=19mm, Extrude 10mm", "Cut center bore D=10.5mm, tap with internal helix sweep", "Chamfer corners 1.5mm × 45°"] },
+      { title: 'Assemble & Mate', actions: ["Go to Assembly tab, insert Bolt and Nut", "Apply Cylindrical Mate between nut bore and bolt shaft", "Add a Gear/Screw relation to link rotation to translation"] },
+      { title: 'Animate', actions: ["Right click the mate -> Animate", "Set start/end values to watch the nut spin down the thread"] }
+    ],
+    tips: ['M12 standard pitch is 1.75mm', 'Real helical threads are computation-heavy; use cosmetic threads for complex assemblies', 'Always chamfer the bolt tip to aid engagement']
+  },
+  {
+    id: 'model5', num: 5, name: 'Turbine Engine Blade', level: 'Intermediate-Advanced', time: '2.5 hrs',
+    sketchfabId: '42c58371d2c148efac53eff84a7d9c12',
+    sketchfabTitle: 'Turbine Engine Blade',
+    desc: "Model a jet engine turbine blade using Loft across twisted aerofoil cross-sections. Teaches advanced surface lofting, twisting, and blending.",
+    objectives: ['Sketch aerofoil cross-sections at multiple offset planes', 'Use Loft to blend twisted sections', 'Add a root attachment profile', 'Apply precise fillets to trailing edges'],
+    steps: [
+      { title: 'Define Planes', actions: ["Create 4 parallel planes offset along the Z-axis", "Heights: 0mm, 25mm, 60mm, 90mm"] },
+      { title: 'Sketch Aerofoils', actions: ["On each plane sketch a curved aerofoil profile", "Twist each profile successively (e.g., 0°, 15°, 30°, 45°)", "Scale the profiles down as you go up"] },
+      { title: 'Loft the Blade', actions: ["Click Loft tool", "Select the 4 profiles in order from bottom to top", "Enable 'Smooth' tangency"] },
+      { title: 'Model the Root', actions: ["Sketch a rectangular or fir-tree profile at the base", "Extrude downward to form the mounting block"] },
+      { title: 'Fillet and Finish', actions: ["Apply tight fillets to the leading edge (R=1mm)", "Apply very small fillets to the trailing edge (R=0.2mm)"] }
+    ],
+    tips: ['Use Splines for the aerofoils and ensure tangent continuity', 'Use guide rails in the Loft menu if the blade twists improperly', 'Trailing edges must be thin but not zero thickness']
+  },
+  {
+    id: 'model6', num: 6, name: 'Wind Turbine', level: 'Intermediate', time: '2.5–3 hrs',
+    sketchfabId: '285032402a8543ae8bf3e3c4d8c9f98a',
+    sketchfabTitle: 'Wind Turbine',
+    desc: "A multi-part assembly of a modern wind turbine. Practice revolving the hub and nacelle, lofting the blades, and using circular patterns for the rotor assembly.",
+    objectives: ['Revolve aerodynamic bodies (hub and nacelle)', 'Model a large-scale turbine blade', 'Use Circular Pattern for the 3-blade rotor', 'Assemble the tower, nacelle, and rotor'],
+    steps: [
+      { title: 'Model the Tower & Nacelle', actions: ["Revolve a tall tapered cylinder for the tower", "Revolve a streamlined pod for the nacelle body"] },
+      { title: 'Model the Hub', actions: ["Revolve a bullet-shaped spinner", "Extrude three flat mounting faces at 120° intervals"] },
+      { title: 'Model the Blade', actions: ["Loft from a circular root to a thin aerofoil tip", "Ensure the blade has a built-in twist angle for aerodynamics"] },
+      { title: 'Pattern the Rotor', actions: ["Insert Hub and 1 Blade into a sub-assembly", "Use Circular Pattern to duplicate the blade 3 times around the hub"] },
+      { title: 'Final Assembly', actions: ["Mate the Nacelle to the Tower (Revolute - Yaw)", "Mate the Rotor to the Nacelle (Revolute - Pitch)"] }
+    ],
+    tips: ['Keep parts in separate Part Studios to stay organized', 'A standard wind turbine has exactly 3 blades at 120 degrees', 'Use Sub-assemblies for the rotor before attaching to the tower']
+  },
+  {
+    id: 'model7', num: 7, name: 'Drone Frame (Hubsan X4)', level: 'Intermediate', time: '2–2.5 hrs',
+    sketchfabId: 'ca3f021eb97b44f9a115b2393aaea2cc',
+    sketchfabTitle: 'Hubsan X4 MiniDrone Nano Quadcopter Frame 110mm',
+    desc: "Model a technical, symmetrical quadcopter frame. This requires complex top-down sketching, mirroring quadrants, and modeling motor mounting cylinders and weight-saving ribs.",
+    objectives: ['Utilize top-down layout sketching', 'Use the Mirror tool for perfect X-symmetry', 'Model cylindrical motor mounts with wire routing holes', 'Design structural ribs for strength-to-weight ratio'],
+    steps: [
+      { title: 'Master Layout Sketch', actions: ["Sketch on Top plane", "Draw lines defining the X-shape (110mm motor-to-motor diagonal)", "Sketch only one quadrant (top-right)"] },
+      { title: 'Model One Arm', actions: ["Extrude the central body quarter and one arm (3mm thickness)", "Add a cylindrical motor mount at the arm tip (Inner D=7mm, Outer D=9mm)"] },
+      { title: 'Mirror to Complete', actions: ["Mirror the solid body across the Front plane (makes a half)", "Mirror the new body across the Right plane (makes full X-frame)"] },
+      { title: 'Add Details', actions: ["Cut out a central bay for the battery and flight controller", "Add weight-saving cutouts along the arms", "Fillet all internal corners to reduce stress concentrations"] }
+    ],
+    tips: ['Drone frames must be rigid but light. Use ribs!', 'Only model 25% of the frame, then mirror twice to save 75% of the work', 'Ensure motor mounts match standard micro-motor diameters']
+  },
+  {
+    id: 'model8', num: 8, name: 'SpaceX Starship', level: 'Intermediate', time: '2–2.5 hrs',
+    sketchfabId: 'd4204f8cf2ad499fb062a80cc4b1e13e',
+    sketchfabTitle: 'SpaceX Starship',
+    desc: "Model a complex hard-surface aerospace vehicle. Features large scale revolved bodies, aerodynamic fins with hinges, and patterned engine layouts.",
+    objectives: ['Revolve the main stainless steel cylindrical body', 'Loft or Revolve the aerodynamic nose cone', 'Model actuated aero-flaps (grid fins/elons)', 'Pattern rocket engine bells in a concentric layout'],
+    steps: [
+      { title: 'Main Hull', actions: ["Sketch a massive rectangle profile and revolve to create the cylindrical tank section", "Revolve a tangent ogive curve for the nose section"] },
+      { title: 'Aero Flaps', actions: ["Sketch the forward and aft flaps on the Right plane", "Extrude them symmetrically", "Fillet the edges for aerodynamics"] },
+      { title: 'Engine Skirt', actions: ["Cut a cavity at the base of the ship", "Model a single Raptor engine bell (Revolve)"] },
+      { title: 'Engine Pattern', actions: ["Use Circular Pattern to create the outer ring of engines", "Place inner gimbaling engines", "Apply a metallic appearance to the parts"] }
+    ],
+    tips: ['The nose cone is a tangent ogive shape — use a spline, not an arc, for accuracy', 'Use separate bodies for the flaps so they can be animated later in an Assembly']
+  },
+  {
+    id: 'model9', num: 9, name: 'Robotic Arm', level: 'Advanced', time: '2.5–3 hrs',
+    sketchfabId: 'bd74aa2e3a244a2ead4261edf6744af8',
+    sketchfabTitle: 'Robotic Arm',
+    desc: "Model a multi-DOF robotic arm assembly. The perfect introduction to kinematic chains, revolute mates, and designing separate links that integrate flawlessly.",
+    objectives: ['Model separate arm segments (base, bicep, forearm, wrist)', 'Assemble a serial kinematic chain', 'Apply correct mate types (Revolute) to mimic servos/motors', 'Check for collision and joint limits'],
+    steps: [
+      { title: 'Model Base & Shoulder', actions: ["Create a heavy cylindrical base", "Model a rotating shoulder bracket with a horizontal pivot hole"] },
+      { title: 'Model Linkages', actions: ["Model Link 1 (Bicep) with pivot holes at both ends", "Model Link 2 (Forearm) tapering towards the wrist"] },
+      { title: 'Model End Effector', actions: ["Model a simple 2-finger gripper mechanism"] },
+      { title: 'Assemble Mates', actions: ["Insert all parts into an Assembly", "Fix/Ground the Base", "Apply Revolute mates sequentially: Base->Shoulder, Shoulder->Bicep, Bicep->Forearm"] },
+      { title: 'Test Motion', actions: ["Drag the gripper to see inverse kinematics in action", "Set joint limits (e.g., -90° to +90°) on the elbow to prevent parts clipping"] }
+    ],
+    tips: ['Always define the joint axis carefully — a misaligned axis causes erratic motion', 'Model joint clevises (U-shapes) with enough clearance for the inner link to rotate freely']
+  },
+  {
+    id: 'model10', num: 10, name: 'Spot Robot (Quadruped)', level: 'Advanced', time: '4–6 hrs',
+    sketchfabId: '5d114e1b5c224ae39b36fdbb3fae5a1e',
+    sketchfabTitle: 'Spot Robot Low Poly Model with Rig',
+    desc: "The ultimate final project — a quadruped robot inspired by Boston Dynamics. Integrates complex sub-assemblies, multi-limb rigging (mating), and advanced hard-surface modeling.",
+    objectives: ['Design a complete robot chassis housing electronics', 'Model a multi-jointed leg as a sub-assembly', 'Use mirroring to duplicate limbs across the chassis', 'Rig the complete robot for dynamic posing'],
+    steps: [
+      { title: 'Chassis Modeling', actions: ["Model the main torso block, shell it for weight reduction", "Add mounting points for the 4 hip motors", "Model the front sensor head/cameras"] },
+      { title: 'Leg Sub-Assembly', actions: ["Model the Hip block (abduction joint)", "Model the Thigh and Calf links", "Assemble one complete leg in a separate Assembly tab with 3 Revolute Mates"] },
+      { title: 'Main Assembly Integration', actions: ["Insert the Chassis into the main assembly and Fix it", "Insert 4 instances of the Leg Sub-assembly"] },
+      { title: 'Attach Limbs', actions: ["Mate the legs to the 4 hip mounting points on the chassis", "Mirror parts if left/right leg geometries are asymmetric"] },
+      { title: 'Final Rigging', actions: ["Pose the robot in a walking trot gait (diagonal legs forward)", "Check for joint collisions throughout the full range of motion"] }
+    ],
+    tips: ['Use Sub-assemblies! Do not try to mate all 12 leg joints in the main assembly.', 'Color code your parts (e.g., yellow and black) for presentation', 'Ensure legs have enough clearance to cross over each other if necessary']
+  }
+];
+
+// ===== RENDER MODEL CARDS =====
+function buildModelCards() {
+  const grid = document.getElementById('models-grid');
+
+  MODELS.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'model-card';
+    card.id = m.id;
+
+    // Build Sketchfab embed URL with autostart and ui_stop params for clean embed
+    const sfSrc = `https://sketchfab.com/models/${m.sketchfabId}/embed?autostart=0&ui_stop=0&ui_infos=0&ui_watermark_link=0`;
+
+    card.innerHTML = `
+      <div class="model-card-header">
+        <div class="model-num">${m.num}</div>
+        <div>
+          <div class="model-title">${m.name}</div>
+          <div class="model-meta">Level: ${m.level} &nbsp;·&nbsp; Est. Time: ${m.time}</div>
+        </div>
+      </div>
+      <div class="model-body">
+        <div class="model-viewer">
+          <iframe
+            title="${m.sketchfabTitle}"
+            frameborder="0"
+            allowfullscreen
+            mozallowfullscreen="true"
+            webkitallowfullscreen="true"
+            allow="autoplay; fullscreen; xr-spatial-tracking"
+            src="${sfSrc}"
+            loading="lazy">
+          </iframe>
+          <div class="sf-badge">Sketchfab · Interactive 3D</div>
+        </div>
+        <div class="model-info">
+          <p class="model-desc">${m.desc}</p>
+          <div class="objectives-title">Learning Objectives</div>
+          <ul class="obj-list">${m.objectives.map(o => `<li>${o}</li>`).join('')}</ul>
+          <div class="steps-title">Step-by-Step Instructions</div>
+          <div class="steps-accordion">
+            ${m.steps.map((s, i) => `
+              <div class="step-item" id="step-${m.id}-${i}">
+                <div class="step-header" onclick="toggleStep('step-${m.id}-${i}')">
+                  <div class="step-num">${i + 1}</div>
+                  <span>${s.title}</span>
+                  <span class="step-arrow">▶</span>
+                </div>
+                <div class="step-body"><ul>${s.actions.map(a => `<li>${a}</li>`).join('')}</ul></div>
+              </div>`).join('')}
+          </div>
+          <div class="tips-title">Tips &amp; Best Practices</div>
+          <ul class="tip-list">${m.tips.map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>
+      </div>`;
+
+    grid.appendChild(card);
+  });
+}
+
+function toggleStep(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ===== GRADING RUBRIC =====
+function buildGrading() {
+  const rubric = [
+    { label: 'Dimensional Accuracy', desc: 'All dimensions match spec within ±0.5mm', weight: 25 },
+    { label: 'Sketch Quality', desc: 'All sketches fully constrained', weight: 20 },
+    { label: 'Feature Use', desc: 'Appropriate features, no unnecessary steps', weight: 20 },
+    { label: 'Assembly Mates', desc: 'Parts correctly mated, correct DOF', weight: 15 },
+    { label: 'Naming & Organization', desc: 'Features, parts, mates clearly named', weight: 10 },
+    { label: 'DFM Compliance', desc: 'Wall thickness, clearances, draft angles correct', weight: 10 },
+  ];
+  const container = document.getElementById('grading-rubric');
+  rubric.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'margin-bottom:14px;';
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:14px;font-weight:600;color:var(--secondary)">${r.label}</span>
+        <span style="font-size:13px;color:var(--primary);font-weight:700">${r.weight} pts</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:5px">${r.desc}</div>
+      <div class="grading-bar"><div class="grading-bar-fill" style="width:0%" data-width="${r.weight}%"></div></div>`;
+    container.appendChild(div);
+  });
+
+  // Animate bars when section scrolls into view
+  const barObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.grading-bar-fill').forEach(bar => {
+          bar.style.width = bar.dataset.width;
+        });
+        barObserver.disconnect();
+      }
+    });
+  });
+  barObserver.observe(container);
+}
+
+// ===== ACTIVE TOC LINK =====
+function initTOC() {
+  const sections = document.querySelectorAll('[id]');
+  const links = document.querySelectorAll('.toc a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.toc a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+}
+
+// ===== SCROLL PROGRESS =====
+window.addEventListener('scroll', () => {
+  const prog = document.getElementById('progress');
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  prog.style.transform = `scaleX(${window.scrollY / max})`;
+});
+
+// ===== GOOGLE TRANSLATE INIT =====
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'bn,en', // Restricts dropdown to Bangla and English
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
+
+// ===== INIT =====
+buildModelCards();
+buildGrading();
+initTOC();
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
